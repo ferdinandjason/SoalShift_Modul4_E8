@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/administrator/Documents";
+static const char *dirpath = "/home/ferdinand/Download/tmp";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -84,10 +84,28 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
+static int xmp_rename(const char *from, const char *to)
+{
+    // juga digunakan untuk menyimpan / menyimpan hasil perubahan isi berkas
+    int res;
+    char _from[1000];
+    char _to[1000];
+    system("mkdir /home/ferdinand/Downloads/tmp/simpanan -p");
+    char direktori[] = "/home/ferdinand/Downloads/tmp/simpanan";
+    sprintf(_from,"%s%s",dirpath,from);
+    sprintf(_to,"%s%s",direktori,to);
+    res = rename(_from, _to);
+    if(res == -1)
+    return -errno;
+
+    return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
-	.read		= xmp_read,
+    .read		= xmp_read,
+    .rename     = xmp_rename,
 };
 
 int main(int argc, char *argv[])
