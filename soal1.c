@@ -27,7 +27,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi)
 {
-  char fpath[1000];
+  	char fpath[1000];
 	if(strcmp(path,"/") == 0)
 	{
 		path=dirpath;
@@ -85,10 +85,57 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
+static int xmp_open(const char *path, struct fuse_file_info *fi)
+{
+	int res;
+	char fpath[1000];
+	sprintf(fpath,"%s%s",dirpath,path);
+	if(strstr(fpath,".pdf")==0 || strstr(fpath,".doc")==0 || strstr(fpath,".txt")==0){
+		char ch, source_file[1000], target_file[1000];
+		sprintf(source_file,"%s",fpath);
+		sprintf(target_file,"%s.ditandai",fpath);
+		perror("Terjadi Kesalahan! File berisi konten berbahaya.\n");
+		int ret=rename(source_file,target_file);
+		// sprintf(source_file,"%s",fpath);
+		// source = fopen(source_file,"rb");
+
+		// sprintf(target_file,"%s.ditandai",fpath);
+
+		// int available;
+		// available = access(target_file,F_OK);
+		// if(available==0)
+		// {
+		// 	unlink(target_file);
+		// }
+
+		// target = fopen(target_file,"wb");
+
+		// while( ( ch = fgetc(source) ) != EOF )
+		// 	fputc(ch, target);
+
+		// char command[100];
+		// sprintf(command,"chmod 444 '%s.bak'",fpath);
+		// system(command);
+
+		// fclose(source);
+		// fclose(target);
+
+		// res = open(fpath, fi->flags);
+		// if (res == -1)
+		// return -errno;
+
+		// close(res);
+	}
+
+	
+	return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
+	.open       = xmp_open,
 };
 
 int main(int argc, char *argv[])
