@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/ferdinand/Download/tmp";
+static const char *dirpath = "/home/ferdinand/Downloads/tmp";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -69,7 +69,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-  int fd = 0 ;
+    int fd = 0 ;
 
 	(void) fi;
 	fd = open(fpath, O_RDONLY);
@@ -101,11 +101,57 @@ static int xmp_rename(const char *from, const char *to)
     return 0;
 }
 
+static int xmp_truncate(const char *path, off_t size)
+{
+    int res;
+     char fpath[1000];
+ sprintf(fpath,"%s%s", dirpath, path);
+    res = truncate(fpath, size);
+    if(res == -1)
+        return -errno;
+
+    return 0;
+}
+
+static int xmp_write(const char *path, const char *buf, size_t size,
+		     off_t offset, struct fuse_file_info *fi)
+{
+	int fd;
+	int res;
+
+	(void) fi;
+	fd = open(path, O_WRONLY);
+	if (fd == -1)
+		return -errno;
+
+	res = pwrite(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+
+	close(fd);
+	return res;
+}
+
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+{
+    int res;
+    char fpath[1000];
+    sprintf(fpath,"%s%s", dirpath, path);
+    res = mknod(fpath, mode, rdev);
+    if(res == -1)
+        return -errno;
+
+    return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
     .read		= xmp_read,
     .rename     = xmp_rename,
+    .truncate   = xmp_truncate,
+    .write      = xmp_write,
+    .mknod      = xmp_mknod,
 };
 
 int main(int argc, char *argv[])
