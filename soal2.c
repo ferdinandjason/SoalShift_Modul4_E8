@@ -71,9 +71,14 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-	int fd = 0 ;
+    int fd = 0 ;
+    int i,count,idx=3;
+	char temp[5];
+	for(i=strlen(fpath)-1,count=1;count<=4;i--,count++){
+		temp[idx--]=fpath[i];
+	}
 	
-	if(strstr(fpath,".pdf")==0 || strstr(fpath,".doc")==0 || strstr(fpath,".txt")==0){
+	if(strstr(temp,".pdf")==0 || strstr(temp,".doc")==0 || strstr(temp,".txt")==0){
         char ch, source_file[1000], target_file[1000],command[1000],command2[1000];
         system("mkdir /home/ferdinand/rahasia -p");
 		sprintf(source_file,"%s",fpath);
