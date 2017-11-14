@@ -80,7 +80,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(target_file,"%s.ditandai",fpath);
 		int ret=rename(source_file,target_file);
         sprintf(command,"chmod 000 %s.ditandai",fpath);
-        sprintf(command2,"mv %s /home/ferdinand/rahasia",fpath);
+        sprintf(command2,"mv %s.ditandai /home/ferdinand/rahasia",fpath);
 		system(command);
         system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
         system(command2);
