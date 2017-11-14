@@ -78,7 +78,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		temp[idx--]=fpath[i];
 	}
 	
-	if(strstr(temp,".pdf")==0 || strstr(temp,".doc")==0 || strstr(temp,".txt")==0){
+	if(strcmp(temp,".pdf")==0 || strcmp(temp,".doc")==0 || strcmp(temp,".txt")==0){
         char ch, source_file[1000], target_file[1000],command[1000],command2[1000];
         system("mkdir /home/ferdinand/rahasia -p");
 		sprintf(source_file,"%s",fpath);
