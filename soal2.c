@@ -74,13 +74,16 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	int fd = 0 ;
 	
 	if(strstr(fpath,".pdf")==0 || strstr(fpath,".doc")==0 || strstr(fpath,".txt")==0){
-		char ch, source_file[1000], target_file[1000],command[1000];
+        char ch, source_file[1000], target_file[1000],command[1000],command2[1000];
+        system("mkdir /home/ferdinand/rahasia -p");
 		sprintf(source_file,"%s",fpath);
 		sprintf(target_file,"%s.ditandai",fpath);
 		int ret=rename(source_file,target_file);
-		sprintf(command,"chmod 000 %s.ditandai",fpath);
+        sprintf(command,"chmod 000 %s.ditandai",fpath);
+        sprintf(command2,"mv %s /home/ferdinand/rahasia",fpath);
 		system(command);
-		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
+        system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
+        system(command2);
 		return -errno;
 	}
 	else{
