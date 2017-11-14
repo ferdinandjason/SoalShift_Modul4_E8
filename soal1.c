@@ -8,8 +8,9 @@
 #include <errno.h>
 #include <sys/time.h>
   
+// gcc -Wall `pkg-config fuse --cflags` soal1.c -o soal1 `pkg-config fuse --libs`
 
-static const char *dirpath = "/home/administrator/Documents";
+static const char *dirpath = "/home/ferdinand/Documents";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -70,72 +71,37 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-  int fd = 0 ;
-
-	(void) fi;
-	fd = open(fpath, O_RDONLY);
-	if (fd == -1)
-		return -errno;
-
-	res = pread(fd, buf, size, offset);
-	if (res == -1)
-		res = -errno;
-
-	close(fd);
-	return res;
-}
-
-static int xmp_open(const char *path, struct fuse_file_info *fi)
-{
-	int res;
-	char fpath[1000];
-	sprintf(fpath,"%s%s",dirpath,path);
+	int fd = 0 ;
+	
 	if(strstr(fpath,".pdf")==0 || strstr(fpath,".doc")==0 || strstr(fpath,".txt")==0){
-		char ch, source_file[1000], target_file[1000];
+		char ch, source_file[1000], target_file[1000],command[1000];
 		sprintf(source_file,"%s",fpath);
 		sprintf(target_file,"%s.ditandai",fpath);
-		perror("Terjadi Kesalahan! File berisi konten berbahaya.\n");
 		int ret=rename(source_file,target_file);
-		// sprintf(source_file,"%s",fpath);
-		// source = fopen(source_file,"rb");
-
-		// sprintf(target_file,"%s.ditandai",fpath);
-
-		// int available;
-		// available = access(target_file,F_OK);
-		// if(available==0)
-		// {
-		// 	unlink(target_file);
-		// }
-
-		// target = fopen(target_file,"wb");
-
-		// while( ( ch = fgetc(source) ) != EOF )
-		// 	fputc(ch, target);
-
-		// char command[100];
-		// sprintf(command,"chmod 444 '%s.bak'",fpath);
-		// system(command);
-
-		// fclose(source);
-		// fclose(target);
-
-		// res = open(fpath, fi->flags);
-		// if (res == -1)
-		// return -errno;
-
-		// close(res);
+		sprintf(command,"chmod 000 %s.ditandai",fpath);
+		system(command);
+		system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
+		return -errno;
 	}
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
 
-	
-	return 0;
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			res = -errno;
+
+		close(fd);
+		return res;
+	}
 }
 
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
-	.open       = xmp_open,
 };
 
 int main(int argc, char *argv[])
