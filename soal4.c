@@ -23,6 +23,17 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	return 0;
 }
 
+static int xmp_chmod(const char *path, mode_t mode)
+{
+	int res;
+	char fpath[1000];
+	sprintf(fpath,"%s%s",dirpath,path);
+    res = chmod(fpath, mode);
+    if (res == -1)
+        return -errno;
+    return 0;
+}
+
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi)
 {
@@ -93,8 +104,12 @@ static int xmp_rename(const char *from, const char *to)
     system("mkdir /home/ferdinand/Downloads/tmp/simpanan -p");
     char direktori[] = "/home/ferdinand/Downloads/tmp/simpanan";
     sprintf(_from,"%s%s",dirpath,from);
-    sprintf(_to,"%s%s",direktori,to);
+    sprintf(_to,"%s%s.copy",direktori,to);
 	res = rename(_from, _to);
+	char command[1000];
+	sprintf(command,"chmod 000 %s",_to);
+	system(command);
+
 	system("mv /home/ferdinand/Downloads/tmp/tmp/%s /home/ferdinand/Downloads/tmp/",from);
 	system("rmdir /home/ferdinand/Downloads/tmp");
     if(res == -1)
@@ -149,13 +164,26 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 
 static int xmp_open(const char *path,struct fuse_file_info *fi)
 {
+	int res;
+	char fpath[1000];
+    sprintf(fpath,"%s%s", dirpath, path);
+	
+	int i,count,idx=4;
+	char temp[5];
+	for(i=strlen(fpath)-1,count=1;count<=4;i--,count++){
+		temp[idx--]=fpath[i];
+	}
+	if(strcmp(temp,".copy")==0){
+		system("zenity --error --text=\"File yang anda buka adalah file hasil salinan. File tidak bisa diubah maupun disalin kembali!\" --title=\"Error!\"");
+		return -1;
+	}
+	
 	system("mkdir /home/ferdinand/Downloads/tmp/tmp -p");
 	char command[1000];
 	sprintf(command,"cp %s /home/ferdinand/Downloads/tmp/tmp",path);
 	system(command);
-	int res;
-	char fpath[1000];
-    sprintf(fpath,"%s%s", dirpath, path);
+	
+
     res = open(fpath, fi->flags);
     if (res == -1)
         return -errno;
@@ -172,6 +200,7 @@ static struct fuse_operations xmp_oper = {
     .write      = xmp_write,
 	.mknod      = xmp_mknod,
 	.open		= xmp_open,
+	.chmod		= xmp_chmod,
 };
 
 int main(int argc, char *argv[])
