@@ -84,29 +84,10 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
-static int xmp_rename(const char *from, const char *to)
-{
-    // juga digunakan untuk menyimpan / menyimpan hasil perubahan isi berkas
-    int res;
-    char _from[1000];
-    char _to[1000];
-    system("mkdir /home/ferdinand/Downloads/tmp/simpanan -p");
-    char direktori[] = "/home/ferdinand/Downloads/tmp/simpanan";
-    sprintf(_from,"%s%s",dirpath,from);
-    sprintf(_to,"%s%s",direktori,to);
-	res = rename(_from, _to);
-	system("mv /home/ferdinand/Downloads/tmp/tmp/%s /home/ferdinand/Downloads/tmp/",from);
-	system("rmdir /home/ferdinand/Downloads/tmp");
-    if(res == -1)
-    	return -errno;
-
-    return 0;
-}
-
 static int xmp_truncate(const char *path, off_t size)
 {
-    int res;
-     char fpath[1000];
+	int res;
+	char fpath[1000];
  	sprintf(fpath,"%s%s", dirpath, path);
     res = truncate(fpath, size);
     if(res == -1)
@@ -118,10 +99,16 @@ static int xmp_truncate(const char *path, off_t size)
 static int xmp_write(const char *path, const char *buf, size_t size,
 		     off_t offset, struct fuse_file_info *fi)
 {
+	system("mkdir /home/ferdinand/Downloads/tmp/simpanan -p");
+	system("chmod 666 /homr/ferdinand/Downloads/tmp/simpanan");
 	int fd;
 	int res;
 	char fpath[1000];
-    sprintf(fpath,"%s%s", dirpath, path);
+	char direktori[] = "/home/ferdinand/Downloads/tmp/simpanan/";
+	char command[1000];
+	sprintf(command,"touch %s%s",direktori,path);
+	system(command);
+    sprintf(fpath,"%s%s", direktori, path);
 	(void) fi;
 	fd = open(fpath, O_WRONLY);
 	if (fd == -1)
@@ -149,10 +136,7 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 
 static int xmp_open(const char *path,struct fuse_file_info *fi)
 {
-	system("mkdir /home/ferdinand/Downloads/tmp/tmp -p");
 	char command[1000];
-	sprintf(command,"cp %s /home/ferdinand/Downloads/tmp/tmp",path);
-	system(command);
 	int res;
 	char fpath[1000];
     sprintf(fpath,"%s%s", dirpath, path);
@@ -167,8 +151,7 @@ static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
     .read		= xmp_read,
-    .rename     = xmp_rename,
-    //.truncate   = xmp_truncate,
+    .truncate   = xmp_truncate,
     .write      = xmp_write,
 	.mknod      = xmp_mknod,
 	.open		= xmp_open,
