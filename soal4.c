@@ -11,7 +11,7 @@ static const char *dirpath ="/home/ferdinand/Downloads/tmp";
 
 char readPath[1000];
 
-static int xmp_getattr(const char *path, struct stat *stbuf)
+static int e8_getattr(const char *path, struct stat *stbuf)
 {
     int res;
     char fpath[1000];
@@ -23,7 +23,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
 
-static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
+static int e8_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
 {
     DIR *dp;
     struct dirent *de;
@@ -45,7 +45,7 @@ static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
     return res;
 }
 
-static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+static int e8_mknod(const char *path, mode_t mode, dev_t rdev)
 {
     int res;
     char fpath[1000];
@@ -57,7 +57,7 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
     return 0;
 }
 
-static int xmp_chmod(const char *path, mode_t mode)
+static int e8_chmod(const char *path, mode_t mode)
 {
     int res;
 
@@ -70,7 +70,7 @@ static int xmp_chmod(const char *path, mode_t mode)
     return 0;
 }
 
-static int xmp_open(const char *path, int flags)
+static int e8_open(const char *path, int flags)
 {
     int res;
     char fpath[1000];
@@ -83,7 +83,7 @@ static int xmp_open(const char *path, int flags)
     return 0;
 }
 
-static int xmp_read(const char *path, char *buf, size_t size, off_t offset)
+static int e8_read(const char *path, char *buf, size_t size, off_t offset)
 {
     int fd;
     int res;
@@ -102,7 +102,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset)
     return res;
 }
 
-static int xmp_write(const char *path, const char *buf, size_t size, off_t offset)
+static int e8_write(const char *path, const char *buf, size_t size, off_t offset)
 {
     int fd;
     int res;
@@ -147,31 +147,31 @@ static int xmp_write(const char *path, const char *buf, size_t size, off_t offse
     return res;
 }
 
-static struct fuse_operations xmp_oper = {
-.getattr = xmp_getattr,
-//.readlink = xmp_readlink,
-.getdir = xmp_getdir,
-.mknod = xmp_mknod,
-//.mkdir = xmp_mkdir,
-//.symlink = xmp_symlink,
-//.unlink = xmp_unlink,
-//.rmdir = xmp_rmdir,
-//.rename = xmp_rename,
-//.link = xmp_link,
-.chmod = xmp_chmod,
-//.chown = xmp_chown,
-//.truncate = xmp_truncate,
-//.utime = xmp_utime,
-.open = xmp_open,
-.read = xmp_read,
-.write = xmp_write,
-//.release = xmp_release,
-//.fsync = xmp_fsync
+static struct fuse_operations e8_oper = {
+.getattr = e8_getattr,
+//.readlink = e8_readlink,
+.getdir = e8_getdir,
+.mknod = e8_mknod,
+//.mkdir = e8_mkdir,
+//.symlink = e8_symlink,
+//.unlink = e8_unlink,
+//.rmdir = e8_rmdir,
+//.rename = e8_rename,
+//.link = e8_link,
+.chmod = e8_chmod,
+//.chown = e8_chown,
+//.truncate = e8_truncate,
+//.utime = e8_utime,
+.open = e8_open,
+.read = e8_read,
+.write = e8_write,
+//.release = e8_release,
+//.fsync = e8_fsync
 
 };
 
 int main(int argc, char *argv[])
 {
-    fuse_main(argc, argv, &xmp_oper);
+    fuse_main(argc, argv, &e8_oper);
     return 0;
 }
