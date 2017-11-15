@@ -12,30 +12,30 @@
 
 static const char *dirpath = "/home/ferdinand/Documents";
 
-static int xmp_getattr(const char *path, struct stat *stbuf)
+static int e8_getattr(const char *path, struct stat *stbuf)
 {
-  int res;
-	char fpath[1000];
-	sprintf(fpath,"%s%s",dirpath,path);
-	res = lstat(fpath, stbuf);
+  int hsl;
+	char path2[1000];
+	sprintf(path2,"%s%s",dirpath,path);
+	hsl = lstat(path2, stbuf);
 
-	if (res == -1)
+	if (hsl == -1)
 		return -errno;
 
 	return 0;
 }
 
-static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+static int e8_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi)
 {
-  	char fpath[1000];
+  	char path2[1000];
 	if(strcmp(path,"/") == 0)
 	{
 		path=dirpath;
-		sprintf(fpath,"%s",path);
+		sprintf(path2,"%s",path);
 	}
-	else sprintf(fpath, "%s%s",dirpath,path);
-	int res = 0;
+	else sprintf(path2, "%s%s",dirpath,path);
+	int hsl = 0;
 
 	DIR *dp;
 	struct dirent *de;
@@ -43,7 +43,7 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	(void) offset;
 	(void) fi;
 
-	dp = opendir(fpath);
+	dp = opendir(path2);
 	if (dp == NULL)
 		return -errno;
 
@@ -52,40 +52,40 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		memset(&st, 0, sizeof(st));
 		st.st_ino = de->d_ino;
 		st.st_mode = de->d_type << 12;
-		res = (filler(buf, de->d_name, &st, 0));
-			if(res!=0) break;
+		hsl = (filler(buf, de->d_name, &st, 0));
+			if(hsl!=0) break;
 	}
 
 	closedir(dp);
 	return 0;
 }
 
-static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+static int e8_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi)
 {
-  char fpath[1000];
+  char path2[1000];
 	if(strcmp(path,"/") == 0)
 	{
 		path=dirpath;
-		sprintf(fpath,"%s",path);
+		sprintf(path2,"%s",path);
 	}
-	else sprintf(fpath, "%s%s",dirpath,path);
-	int res = 0;
+	else sprintf(path2, "%s%s",dirpath,path);
+	int hsl = 0;
     int fd = 0 ;
-    int i,count,idx=3;
+    int i,cnt,idx=3;
 	char temp[5];
-	for(i=strlen(fpath)-1,count=1;count<=4;i--,count++){
-		temp[idx--]=fpath[i];
+	for(i=strlen(path2)-1,cnt=1;cnt<=4;i--,cnt++){
+		temp[idx--]=path2[i];
 	}
 	
 	if(strcmp(temp,".pdf")==0 || strcmp(temp,".doc")==0 || strcmp(temp,".txt")==0){
-        char ch, source_file[1000], target_file[1000],command[1000],command2[1000];
+        char ch, source[1000], target[1000],command[1000],command2[1000];
         system("mkdir /home/ferdinand/rahasia -p");
-		sprintf(source_file,"%s",fpath);
-		sprintf(target_file,"%s.ditandai",fpath);
-		int ret=rename(source_file,target_file);
-        sprintf(command,"chmod 000 %s.ditandai",fpath);
-        sprintf(command2,"mv %s.ditandai /home/ferdinand/rahasia",fpath);
+		sprintf(source,"%s",path2);
+		sprintf(target,"%s.ditandai",path2);
+		int ret=rename(source,target);
+        sprintf(command,"chmod 000 %s.ditandai",path2);
+        sprintf(command2,"mv %s.ditandai /home/ferdinand/rahasia",path2);
 		system(command);
         system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
         system(command2);
@@ -93,27 +93,27 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else{
 		(void) fi;
-		fd = open(fpath, O_RDONLY);
+		fd = open(path2, O_RDONLY);
 		if (fd == -1)
 			return -errno;
 
-		res = pread(fd, buf, size, offset);
-		if (res == -1)
-			res = -errno;
+		hsl = pread(fd, buf, size, offset);
+		if (hsl == -1)
+			hsl = -errno;
 
 		close(fd);
-		return res;
+		return hsl;
 	}
 }
 
-static struct fuse_operations xmp_oper = {
-	.getattr	= xmp_getattr,
-	.readdir	= xmp_readdir,
-	.read		= xmp_read,
+static struct fuse_operations e8_oper = {
+	.getattr	= e8_getattr,
+	.readdir	= e8_readdir,
+	.read		= e8_read,
 };
 
 int main(int argc, char *argv[])
 {
 	umask(0);
-	return fuse_main(argc, argv, &xmp_oper, NULL);
+	return fuse_main(argc, argv, &e8_oper, NULL);
 }
