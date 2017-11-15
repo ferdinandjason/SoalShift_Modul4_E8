@@ -10,7 +10,7 @@
 
 static const char *dirpath = "/home/ferdinand/Downloads/tmp";
 
-static int xmp_getattr(const char *path, struct stat *stbuf)
+static int e8_getattr(const char *path, struct stat *stbuf)
   {
    int res;
  	char fpath[1000];
@@ -23,7 +23,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
  	return 0;
  }
  
- static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+ static int e8_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
  		       off_t offset, struct fuse_file_info *fi)
  {
    char fpath[1000];
@@ -58,7 +58,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
  	return 0;
  }
  
- static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+ static int e8_read(const char *path, char *buf, size_t size, off_t offset,
  		    struct fuse_file_info *fi)
  {
    char fpath[1000];
@@ -84,7 +84,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
   	return res;
   }
   
- static int xmp_rename(const char *from, const char *to)
+ static int e8_rename(const char *from, const char *to)
  {
      // juga digunakan untuk menyimpan / menyimpan hasil perubahan isi berkas
      int res;
@@ -104,7 +104,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
      return 0;
 	}
 	
-static int xmp_write(const char *path, const char *buf, size_t size,
+static int e8_write(const char *path, const char *buf, size_t size,
 		     off_t offset, struct fuse_file_info *fi)
 {
 	int fd;
@@ -124,7 +124,7 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 	return res;
 }
 
-static int xmp_truncate(const char *path, off_t size)
+static int e8_truncate(const char *path, off_t size)
 {
     int res;
      char fpath[1000];
@@ -137,7 +137,7 @@ static int xmp_truncate(const char *path, off_t size)
     return 0;
 }
 
-static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+static int e8_mknod(const char *path, mode_t mode, dev_t rdev)
 {
     int res;
     char fpath[1000];
@@ -151,7 +151,7 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 
 
 
-static int xmp_open(const char *path, struct fuse_file_info *fi)
+static int e8_open(const char *path, struct fuse_file_info *fi)
 {
     char fpath[1000];
 	if(strcmp(path,"/") == 0)
@@ -170,7 +170,7 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 }
 
 
-static int xmp_utimens(const char *path, const struct timespec ts[2])
+static int e8_utimens(const char *path, const struct timespec ts[2])
 {
         int res;
         /* don't use utime/utimes since they follow symlinks */
@@ -180,20 +180,20 @@ static int xmp_utimens(const char *path, const struct timespec ts[2])
         return 0;
 }
 
-  static struct fuse_operations xmp_oper = {
-  	.getattr	= xmp_getattr,
-	.readdir	= xmp_readdir,
-	.read		= xmp_read,
-	.rename     = xmp_rename,
-	.write 		= xmp_write,
-	.truncate	= xmp_truncate,
-	.mknod		= xmp_mknod,
-	.open		= xmp_open,
-	.utimens 	= xmp_utimens,
+  static struct fuse_operations e8_oper = {
+  	.getattr	= e8_getattr,
+	.readdir	= e8_readdir,
+	.read		= e8_read,
+	.rename     = e8_rename,
+	.write 		= e8_write,
+	.truncate	= e8_truncate,
+	.mknod		= e8_mknod,
+	.open		= e8_open,
+	.utimens 	= e8_utimens,
   };
 
 int main(int argc, char *argv[])
 {
 	umask(0);
-	return fuse_main(argc, argv, &xmp_oper, NULL);
+	return fuse_main(argc, argv, &e8_oper, NULL);
 }
