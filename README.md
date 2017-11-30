@@ -3,8 +3,9 @@
 Repositori Dokumentasi Soal Shift Sistem Operasi - Teknik Informatika - E8
 
 ## Daftar Isi
-- [1. FUSE](https://github.com/ferdinandjason/SoalShift_Modul4_E8#FUSE)
-- [2. Soal Shift](https://github.com/ferdinandjason/SoalShift_Modul4_E8#Soal-Shift)
+- [1. FUSE](https://github.com/ferdinandjason/SoalShift_Modul4_E8#fuse)
+- [2. Soal Shift](https://github.com/ferdinandjason/SoalShift_Modul4_E8#soal-shift)
+- [3. References](https://github.com/ferdinandjason/SoalShift_Modul4_E8#references)
 
 ## FUSE
 
