@@ -85,7 +85,7 @@ static int e8_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(target,"%s.ditandai",path2);
 		int ret=rename(source,target);
         sprintf(command,"chmod 000 %s.ditandai",path2);
-        sprintf(command2,"mv %s.ditandai /home/ferdinand/rahasia",path2);
+        sprintf(command2,"mv %s.ditandai /home/ferdinand/Documents/rahasia",path2);
 		system(command);
         system("zenity --error --text=\"Terjadi Kesalahan! File berisi konten berbahaya.\n\" --title=\"Warning!\"");
         system(command2);

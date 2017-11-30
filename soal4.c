@@ -104,12 +104,14 @@ static int e8_read(const char *path, char *buf, size_t size, off_t offset)
 
 static int e8_write(const char *path, const char *buf, size_t size, off_t offset)
 {
+    printf("LOL\n");
     int fd;
     int res;
     int res1;
 	char fpath[1000],temp1[1000],tempe[1000];
 
 	sprintf(fpath, "%s%s", dirpath, path);
+    printf("%s\n",fpath);
 
 	strncpy(tempe,fpath,strlen(fpath)-4);
 	int i,count,idx=3;
@@ -117,7 +119,6 @@ static int e8_write(const char *path, const char *buf, size_t size, off_t offset
 	for(i=strlen(fpath)-1,count=1;count<=4;i--,count++){
 		tempeks[idx--]=fpath[i];
 	}
-
 
     fd = open(fpath, O_WRONLY);
     if(fd == -1)

@@ -52,6 +52,7 @@ static int e8_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		memset(&st, 0, sizeof(st));
 		st.st_ino = de->d_ino;
 		st.st_mode = de->d_type << 12;
+int res;
 		res = (filler(buf, de->d_name, &st, 0));
 			if(res!=0) break;
 	}
